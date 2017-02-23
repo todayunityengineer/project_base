@@ -16,6 +16,16 @@ public class E
 		Battle = 3,
 	}
 
+	public enum Presenters
+	{
+		TitleMain,
+		MyPageMain,
+		BattleStart,
+		BattleMain,
+		BattlePause,
+		BattleResult,
+	}
+
 	public enum Languages 
 	{
 		English = 0,

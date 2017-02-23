@@ -19,7 +19,7 @@ public class MyPageMainPresenter : BasePresenter
 	{
 		if (btn == btnBattle) 
 		{
-			transition.ExecuteTransition(0);
+			transition.ExecuteTransition(E.Scenes.Battle);
 		}	
 	}
 }

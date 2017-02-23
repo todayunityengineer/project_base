@@ -14,18 +14,21 @@ public abstract class BasePresenter : MonoBehaviour , IButtonListener
 	[SerializeField] protected BaseView view;
 
 	protected bool inThisState { get; private set; }
+	bool _isFirstEnter = true;
+	protected bool isFirstEnter { get{ return _isFirstEnter; }}
 
 	protected StateTransition transition { get; private set; }
 
-	public void SetTransition (StateTransition transition)
+	public void SetTransition (params Transition[] transitions)
 	{
-		this.transition = transition;	
+		this.transition = new StateTransition(transitions);
 	}
 
 	public void Enter () 
 	{
 		OnEnter();	
 		inThisState = true;
+		_isFirstEnter = false;
 	}
 
 	protected abstract void OnEnter ();
@@ -44,10 +47,4 @@ public abstract class BasePresenter : MonoBehaviour , IButtonListener
 	}
 
 	protected abstract void OnButtonClick(UIButton btn);
-
-	void Reset () 
-	{
-		gameObject.name = this.GetType().Name;
-		view = transform.GetComponentInChildren<BaseView>();
-	}
 }

@@ -12,7 +12,7 @@ public class BattleStartPresenter : BasePresenter
 
 	protected override void OnEnter ()
 	{
-		StartCoroutine(battleStartView.CountDown(3, () => transition.ExecuteTransition(0)));
+		StartCoroutine(battleStartView.CountDown(3, () => transition.ExecuteTransition(E.Presenters.BattleMain)));
 	}
 
 	protected override void OnExit ()

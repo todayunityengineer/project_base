@@ -20,6 +20,7 @@ public class UIExtensionEditor
 		UIText text = newGameObject.AddComponent<UIText>();
 		text.color = new Color (0.2f, 0.2f, 0.2f, 1f);
 		text.text = "New Text";
+		text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
 		text.alignment = TextAnchor.MiddleCenter;
 	}
 

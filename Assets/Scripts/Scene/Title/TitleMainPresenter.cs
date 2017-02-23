@@ -23,9 +23,9 @@ public class TitleMainPresenter : BasePresenter
 
 	protected override void OnButtonClick (UIButton btn)
 	{
-		if (btnStart == btn) 
+		if (btnStart == btn)
 		{
-			transition.ExecuteTransition(0);
+			transition.ExecuteTransition(E.Scenes.MyPage);
  		}
 	}
 }
