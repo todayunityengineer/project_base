@@ -1,14 +1,12 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 
 public abstract class BasePresenter : MonoBehaviour , IButtonListener
 {
 	#if UNITY_EDITOR
-	public bool inState {
-		get{
-			return inThisState;
-		}
-	}
+	public bool inState { get { return inThisState; } }
 	#endif
 
 	[SerializeField] protected BaseView view;
@@ -16,12 +14,16 @@ public abstract class BasePresenter : MonoBehaviour , IButtonListener
 	protected bool inThisState { get; private set; }
 	bool _isFirstEnter = true;
 	protected bool isFirstEnter { get{ return _isFirstEnter; }}
+	Dictionary<Presenters, Action> transitions = new Dictionary<Presenters, Action>();
 
-	protected StateTransition transition { get; private set; }
-
-	public void SetTransition (params Transition[] transitions)
+	public void SetTransition (Presenters presenter, Action action)
 	{
-		this.transition = new StateTransition(transitions);
+		transitions.Add(presenter, action);
+	}
+
+	protected void DoTransition (Presenters presenter)
+	{
+		if (transitions.ContainsKey(presenter)) transitions[presenter].Invoke();
 	}
 
 	public void Enter () 
@@ -48,3 +50,6 @@ public abstract class BasePresenter : MonoBehaviour , IButtonListener
 
 	protected abstract void OnButtonClick(UIButton btn);
 }
+
+
+

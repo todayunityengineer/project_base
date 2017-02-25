@@ -4,17 +4,17 @@ using UnityEngine.SceneManagement;
 
 public class BlankController : BaseController 
 {
-	public static E.Scenes nextScene = E.Scenes.Blank;
+	protected override Presenters defaultPresenter { get { return Presenters.None; } }
 
 	protected override void Init ()
 	{
-		if (nextScene == E.Scenes.Blank) 
+		if (firstPresenter == Presenters.None) 
 		{
-			LoadScene(E.Scenes.Title);
+			GetTransitionAction(Presenters.TitleMain).Invoke();
 		}
 		else 
 		{
-			LoadScene(nextScene);
+			GetTransitionAction(firstPresenter).Invoke();
 		}
 	}
 }

@@ -1,92 +1,133 @@
 ﻿using UnityEngine;
 using System;
-using System.Linq;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
+public enum Scenes 
+{
+	Blank = 0,
+	Title = 1,
+	MyPage = 2,
+	Battle = 3,
+}
+
+public enum Presenters
+{
+	None = 0,
+	TitleMain = 10,
+	MyPageMain = 20,
+	BattleStart = 30,
+	BattleMain = 31,
+	BattlePause = 32,
+	BattleResult = 33,
+}
+	
 public abstract class BaseController : MonoBehaviour
 { 	
 	// Static //
-
 	public static BaseController Instance { get; private set; }
+
+	public static Scenes activeScene;
+
+	protected static Presenters firstPresenter;
+
+	static Scenes GetSceneOfPresenter(Presenters presenter)
+	{
+		return (Scenes)((int)presenter/10);
+	}
+
+	protected static Action GetTransitionAction (Presenters transition) 
+	{
+		if (GetSceneOfPresenter(transition) != activeScene){
+			return () => {
+				firstPresenter = transition;
+				Instance.LoadScene(GetSceneOfPresenter(transition));
+			};
+		}else{
+			return () => Instance.ChangePresenter(transition);
+		}
+	}
 
 	public static void ProjectLoaded ()
 	{
 		Instance = GameObject.FindObjectOfType<BaseController>();
-		Instance.Init();
+		activeScene = (Scenes)Enum.Parse(typeof(Scenes), SceneManager.GetActiveScene().name);
 
-		string activeSceneName = SceneManager.GetActiveScene().name;
-		if (activeSceneName != E.Scenes.Blank.ToString())
+		if (activeScene != Scenes.Blank)
 		{
 			Fade.Instance.Close(Instance.Initialized);
 		}
-	}
 
-	protected static void ChangePresenter (Enum a)
-	{
-		if (Instance.presentState != a.ToString())
-		{
-			if (Instance.presentState != "") 
-			{
-				Instance.Presenters(Instance.presentState).Exit();
-			}
-			Instance.presentState = a.ToString();	
-			Instance.Presenters(a).Enter();
-		}
-	}
-
-	protected static void LoadScene (E.Scenes nextScene)
-	{
-		string activeSceneName = SceneManager.GetActiveScene().name;
-		if (activeSceneName == E.Scenes.Blank.ToString())
-		{
-			SceneManager.LoadScene(nextScene.ToString());
-		}
-		else 
-		{
-			BlankController.nextScene = nextScene;
-			Fade.Instance.Open(() => SceneManager.LoadScene(E.Scenes.Blank.ToString()));
-			Instance.EndScene();
-			Instance.isLoaded = false;
-		}
-	}
-
-	public static Action GetDefaultTransitionAction (Enum transition) 
-	{
-		if (Enum.IsDefined(typeof(E.Scenes), transition.ToString())) return () => LoadScene((E.Scenes)Enum.Parse(typeof(E.Scenes), transition.ToString()));
-		else if (Enum.IsDefined(typeof(E.Presenters), transition.ToString())) return () => ChangePresenter((E.Presenters)Enum.Parse(typeof(E.Presenters), transition.ToString()));
-		else return null;
+		Instance.Init();
 	}
 		
 	// Instance //
 
+	protected abstract Presenters defaultPresenter { get; }
 	protected abstract void Init ();
 	protected virtual void FadeClose (){}
 	protected virtual void EndScene (){}
 
-	BasePresenter[] _presenters;
-	BasePresenter[] presenters { 
-		get {
-			if (_presenters == null) _presenters = FindObjectsOfType<BasePresenter>(); 
-			return _presenters;
-		}
-	}
-	string presentState = "";
 	bool isLoaded = false;
+	Presenters presentState = Presenters.None;
 
-	protected BasePresenter Presenters (Enum presenterName)
-	{
-		return Presenters(presenterName.ToString());
-	}
-
-	BasePresenter Presenters (string presenterName)
-	{
-		return presenters.Where(p => p.GetType().Name.Contains(presenterName)).FirstOrDefault();
+	Dictionary<Presenters, BasePresenter> _presenter;
+	protected Dictionary<Presenters, BasePresenter> presenter {
+		get{
+			if (_presenter == null){
+				_presenter = new Dictionary<Presenters, BasePresenter>();
+				BasePresenter[] presenters = FindObjectsOfType<BasePresenter>();
+				foreach(BasePresenter p in presenters)
+				{
+					_presenter.Add((Presenters)Enum.Parse(typeof(Presenters), p.GetType().Name.Replace("Presenter","")), p);
+				}
+			}
+			return _presenter;
+		}
 	}
 
 	void Initialized()
 	{
 		FadeClose();
+
+		if (firstPresenter != Presenters.None) ChangePresenter(firstPresenter);
+		else ChangePresenter(defaultPresenter);
+
 		isLoaded = true;
+	}
+
+	protected void SetTransition(Presenters presenterFrom, params Presenters[] presenterTo)
+	{
+		for (int i = 0; i < presenterTo.Length; i++) {
+			presenter[presenterFrom].SetTransition(presenterTo[i], GetTransitionAction(presenterTo[i]));
+		}
+	}
+
+	void ChangePresenter (Presenters nextPresenter)
+	{
+		if (presentState != nextPresenter)
+		{
+			if (presentState != Presenters.None) 
+			{
+				presenter[Instance.presentState].Exit();
+			}
+			presentState = nextPresenter;	
+			presenter[nextPresenter].Enter();
+		}
+	}
+
+	void LoadScene (Scenes nextScene)
+	{
+		if (activeScene == Scenes.Blank)
+		{
+			SceneManager.LoadScene(nextScene.ToString());
+		}
+		else 
+		{
+			Fade.Instance.Open(() => SceneManager.LoadScene(Scenes.Blank.ToString()));
+			Instance.EndScene();
+			Instance.isLoaded = false;
+		}
 	}
 }

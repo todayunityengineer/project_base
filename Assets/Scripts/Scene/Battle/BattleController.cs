@@ -3,28 +3,16 @@ using System.Collections;
 
 public class BattleController : BaseController 
 {
+	protected override Presenters defaultPresenter { get { return Presenters.BattleStart; } }
+
 	protected override void Init ()
 	{
-		Presenters(E.Presenters.BattleStart).SetTransition(
-			new Transition(E.Presenters.BattleMain)
-		);
+		SetTransition(Presenters.BattleStart, Presenters.BattleMain);
 
-		Presenters(E.Presenters.BattleMain).SetTransition(
-			new Transition(E.Presenters.BattlePause),
-			new Transition(E.Presenters.BattleResult)
-		);
+		SetTransition(Presenters.BattleMain, Presenters.BattlePause, Presenters.BattleResult);
 
-		Presenters(E.Presenters.BattlePause).SetTransition(
-			new Transition(E.Presenters.BattleMain)
-		);
+		SetTransition(Presenters.BattlePause, Presenters.BattleMain);
 
-		Presenters(E.Presenters.BattleResult).SetTransition(
-			new Transition(E.Scenes.MyPage)
-		);
-	}
-
-	protected override void FadeClose ()
-	{
-		ChangePresenter(E.Presenters.BattleStart);
+		SetTransition(Presenters.BattleResult, Presenters.MyPageMain);
 	}
 }

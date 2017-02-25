@@ -3,11 +3,7 @@ using System.Collections;
 
 public class TitleMainPresenter : BasePresenter 
 {
-	TitleMainView titleMainView {
-		get{
-			return view as TitleMainView;
-		}
-	}
+	TitleMainView titleMainView { get { return view as TitleMainView; } }
 
 	[SerializeField]UIButton btnStart;
 
@@ -25,7 +21,7 @@ public class TitleMainPresenter : BasePresenter
 	{
 		if (btnStart == btn)
 		{
-			transition.ExecuteTransition(E.Scenes.MyPage);
+			DoTransition(Presenters.MyPageMain);
  		}
 	}
 }
