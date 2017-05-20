@@ -34,6 +34,6 @@ public sealed class ProjectController : MonoBehaviour
 
 	void ProjectLoaded () 
 	{
-		BaseController.ProjectLoaded();
+		BaseFSM.ProjectLoaded();
 	}
 }

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MyPageController : BaseController 
+public class MyPageFSM : BaseFSM 
 {
 	protected override Presenters defaultPresenter { get { return Presenters.MyPageMain; } }
 

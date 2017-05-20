@@ -12,7 +12,6 @@ public class Utility
 	public static GameObject SetParent (GameObject go, Transform parent)
 	{
 		go.transform.SetParent(parent);
-
 		go.transform.localPosition = Vector3.zero;
 		go.transform.localScale = Vector3.one;
 		if (parent != null) go.layer = parent.gameObject.layer;
@@ -25,7 +24,6 @@ public class Utility
 			rt.offsetMax = Vector2.one;
 			rt.anchoredPosition = Vector2.zero;
 		}
-
 		return go;
 	}
 }

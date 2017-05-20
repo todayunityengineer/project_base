@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class BlankController : BaseController 
+public class BlankFSM : BaseFSM 
 {
 	protected override Presenters defaultPresenter { get { return Presenters.None; } }
 

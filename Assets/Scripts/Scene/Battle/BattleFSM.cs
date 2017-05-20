@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BattleController : BaseController 
+public class BattleFSM : BaseFSM 
 {
 	protected override Presenters defaultPresenter { get { return Presenters.BattleStart; } }
 

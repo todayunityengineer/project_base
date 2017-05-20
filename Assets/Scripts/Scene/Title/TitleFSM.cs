@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TitleController : BaseController 
+public class TitleFSM : BaseFSM 
 {
 	protected override Presenters defaultPresenter { get { return Presenters.TitleMain; } }
 

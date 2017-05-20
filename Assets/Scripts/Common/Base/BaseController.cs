@@ -23,13 +23,11 @@ public enum Presenters
 	BattleResult = 33,
 }
 	
-public abstract class BaseController : MonoBehaviour
+public abstract class BaseFSM : MonoBehaviour
 { 	
 	// Static //
-	public static BaseController Instance { get; private set; }
-
+	public static BaseFSM Instance { get; private set; }
 	public static Scenes activeScene;
-
 	protected static Presenters firstPresenter;
 
 	static Scenes GetSceneOfPresenter(Presenters presenter)
@@ -51,7 +49,7 @@ public abstract class BaseController : MonoBehaviour
 
 	public static void ProjectLoaded ()
 	{
-		Instance = GameObject.FindObjectOfType<BaseController>();
+		Instance = GameObject.FindObjectOfType<BaseFSM>();
 		activeScene = (Scenes)Enum.Parse(typeof(Scenes), SceneManager.GetActiveScene().name);
 
 		if (activeScene != Scenes.Blank)
