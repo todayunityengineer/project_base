@@ -1,27 +1,23 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TitleMainPresenter : BasePresenter 
+public class TitleMainController : BaseController 
 {
-	TitleMainView titleMainView { get { return view as TitleMainView; } }
-
 	[SerializeField]UIButton btnStart;
 
 	protected override void OnEnter ()
 	{
-		titleMainView.OnEnter();
 	}
 
 	protected override void OnExit ()
 	{
-		titleMainView.OnExit();
 	}
 
 	protected override void OnButtonClick (UIButton btn)
 	{
 		if (btnStart == btn)
 		{
-			DoTransition(Presenters.MyPageMain);
+			DoTransition(Controllers.MyPageMain);
  		}
 	}
 }

@@ -3,16 +3,16 @@ using System.Collections;
 
 public class BattleFSM : BaseFSM 
 {
-	protected override Presenters defaultPresenter { get { return Presenters.BattleStart; } }
+	protected override Controllers defaultController { get { return Controllers.BattleStart; } }
 
 	protected override void Init ()
 	{
-		SetTransition(Presenters.BattleStart, Presenters.BattleMain);
+		SetTransition(Controllers.BattleStart, Controllers.BattleMain);
 
-		SetTransition(Presenters.BattleMain, Presenters.BattlePause, Presenters.BattleResult);
+		SetTransition(Controllers.BattleMain, Controllers.BattlePause, Controllers.BattleResult);
 
-		SetTransition(Presenters.BattlePause, Presenters.BattleMain);
+		SetTransition(Controllers.BattlePause, Controllers.BattleMain);
 
-		SetTransition(Presenters.BattleResult, Presenters.MyPageMain);
+		SetTransition(Controllers.BattleResult, Controllers.MyPageMain);
 	}
 }

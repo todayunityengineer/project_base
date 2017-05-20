@@ -1,19 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BattleMainPresenter : BasePresenter 
+public class MyPageMainController : BaseController 
 {
+	[SerializeField] UIButton btnBattle;
+
 	protected override void OnEnter ()
 	{
-		Debug.Log("Battle Start");
+
 	}
 
 	protected override void OnExit ()
 	{
+
 	}
 
 	protected override void OnButtonClick (UIButton btn)
 	{
-		
+		if (btn == btnBattle) 
+		{
+			DoTransition(Controllers.BattleStart);
+		}	
 	}
 }

@@ -4,17 +4,17 @@ using UnityEngine.SceneManagement;
 
 public class BlankFSM : BaseFSM 
 {
-	protected override Presenters defaultPresenter { get { return Presenters.None; } }
+	protected override Controllers defaultController { get { return Controllers.None; } }
 
 	protected override void Init ()
 	{
-		if (firstPresenter == Presenters.None) 
+		if (firstController == Controllers.None) 
 		{
-			GetTransitionAction(Presenters.TitleMain).Invoke();
+			GetTransitionAction(Controllers.TitleMain).Invoke();
 		}
 		else 
 		{
-			GetTransitionAction(firstPresenter).Invoke();
+			GetTransitionAction(firstController).Invoke();
 		}
 	}
 }

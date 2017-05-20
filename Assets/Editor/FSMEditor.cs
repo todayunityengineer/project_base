@@ -16,7 +16,7 @@ public static class FSMEditor
 		GameObject go = EditorUtility.InstanceIDToObject( instanceID ) as GameObject;
 		if (go == null) return;
 
-		BasePresenter presenter = go.GetComponent<BasePresenter>();
+		BaseController presenter = go.GetComponent<BaseController>();
 		if (presenter == null) return;
 
 		if (presenter.inState) GUI.backgroundColor = Color.red;

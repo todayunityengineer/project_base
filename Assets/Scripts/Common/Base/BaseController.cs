@@ -2,130 +2,57 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.SceneManagement;
 
-public enum Scenes 
+public abstract class BaseController : MonoBehaviour , IButtonListener
 {
-	Blank = 0,
-	Title = 1,
-	MyPage = 2,
-	Battle = 3,
+	#if UNITY_EDITOR
+	public bool inState { get { return inThisState; } }
+	#endif
+
+	protected bool inThisState { get; private set; }
+	bool _isFirstEnter = true;
+	protected bool isFirstEnter { get{ return _isFirstEnter; }}
+	Dictionary<Controllers, Action> transitions = new Dictionary<Controllers, Action>();
+
+	public void SetTransition (Controllers controller, Action action)
+	{
+		transitions.Add(controller, action);
+	}
+
+	protected void DoTransition (Controllers controller)
+	{
+		if (transitions.ContainsKey(controller) & inThisState) transitions[controller].Invoke();
+	}
+
+	public void Enter () 
+	{
+		inThisState = true;
+		OnEnter();	
+	}
+
+	protected abstract void OnEnter ();
+
+	public void Exit () 
+	{
+		_isFirstEnter = false;
+		inThisState = false;
+		OnExit();
+	}
+
+	protected abstract void OnExit ();
+
+	public void ButtonClick(UIButton btn)
+	{
+		if (inThisState) OnButtonClick(btn);
+	}
+
+	protected abstract void OnButtonClick(UIButton btn);
+
+	void Reset()
+	{
+		gameObject.name = this.GetType().Name;
+	}
 }
 
-public enum Presenters
-{
-	None = 0,
-	TitleMain = 10,
-	MyPageMain = 20,
-	BattleStart = 30,
-	BattleMain = 31,
-	BattlePause = 32,
-	BattleResult = 33,
-}
-	
-public abstract class BaseFSM : MonoBehaviour
-{ 	
-	// Static //
-	public static BaseFSM Instance { get; private set; }
-	public static Scenes activeScene;
-	protected static Presenters firstPresenter;
 
-	static Scenes GetSceneOfPresenter(Presenters presenter)
-	{
-		return (Scenes)((int)presenter/10);
-	}
 
-	protected static Action GetTransitionAction (Presenters transition) 
-	{
-		if (GetSceneOfPresenter(transition) != activeScene){
-			return () => {
-				firstPresenter = transition;
-				Instance.LoadScene(GetSceneOfPresenter(transition));
-			};
-		}else{
-			return () => Instance.ChangePresenter(transition);
-		}
-	}
-
-	public static void ProjectLoaded ()
-	{
-		Instance = GameObject.FindObjectOfType<BaseFSM>();
-		activeScene = (Scenes)Enum.Parse(typeof(Scenes), SceneManager.GetActiveScene().name);
-
-		if (activeScene != Scenes.Blank)
-		{
-			Fade.Instance.Close(Instance.Initialized);
-		}
-
-		Instance.Init();
-	}
-		
-	// Instance //
-
-	protected abstract Presenters defaultPresenter { get; }
-	protected abstract void Init ();
-	protected virtual void FadeClose (){}
-	protected virtual void EndScene (){}
-
-	bool isLoaded = false;
-	Presenters presentState = Presenters.None;
-
-	Dictionary<Presenters, BasePresenter> _presenter;
-	protected Dictionary<Presenters, BasePresenter> presenter {
-		get{
-			if (_presenter == null){
-				_presenter = new Dictionary<Presenters, BasePresenter>();
-				BasePresenter[] presenters = FindObjectsOfType<BasePresenter>();
-				foreach(BasePresenter p in presenters)
-				{
-					_presenter.Add((Presenters)Enum.Parse(typeof(Presenters), p.GetType().Name.Replace("Presenter","")), p);
-				}
-			}
-			return _presenter;
-		}
-	}
-
-	void Initialized()
-	{
-		FadeClose();
-
-		if (firstPresenter != Presenters.None) ChangePresenter(firstPresenter);
-		else ChangePresenter(defaultPresenter);
-
-		isLoaded = true;
-	}
-
-	protected void SetTransition(Presenters presenterFrom, params Presenters[] presenterTo)
-	{
-		for (int i = 0; i < presenterTo.Length; i++) {
-			presenter[presenterFrom].SetTransition(presenterTo[i], GetTransitionAction(presenterTo[i]));
-		}
-	}
-
-	void ChangePresenter (Presenters nextPresenter)
-	{
-		if (presentState != nextPresenter)
-		{
-			if (presentState != Presenters.None) 
-			{
-				presenter[Instance.presentState].Exit();
-			}
-			presentState = nextPresenter;	
-			presenter[nextPresenter].Enter();
-		}
-	}
-
-	void LoadScene (Scenes nextScene)
-	{
-		if (activeScene == Scenes.Blank)
-		{
-			SceneManager.LoadScene(nextScene.ToString());
-		}
-		else 
-		{
-			Fade.Instance.Open(() => SceneManager.LoadScene(Scenes.Blank.ToString()));
-			Instance.EndScene();
-			Instance.isLoaded = false;
-		}
-	}
-}

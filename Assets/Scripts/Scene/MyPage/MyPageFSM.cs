@@ -3,10 +3,10 @@ using System.Collections;
 
 public class MyPageFSM : BaseFSM 
 {
-	protected override Presenters defaultPresenter { get { return Presenters.MyPageMain; } }
+	protected override Controllers defaultController { get { return Controllers.MyPageMain; } }
 
 	protected override void Init () 
 	{
-		SetTransition(Presenters.MyPageMain, Presenters.BattleStart);
+		SetTransition(Controllers.MyPageMain, Controllers.BattleStart);
 	}
 }

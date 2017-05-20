@@ -1,13 +1,12 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
-public class MyPageMainPresenter : BasePresenter 
+public class BattleStartController : BaseController 
 {
-	[SerializeField] UIButton btnBattle;
-
 	protected override void OnEnter ()
 	{
-
+		DoTransition(Controllers.BattleMain);
 	}
 
 	protected override void OnExit ()
@@ -17,9 +16,6 @@ public class MyPageMainPresenter : BasePresenter
 
 	protected override void OnButtonClick (UIButton btn)
 	{
-		if (btn == btnBattle) 
-		{
-			DoTransition(Presenters.BattleStart);
-		}	
+		
 	}
 }

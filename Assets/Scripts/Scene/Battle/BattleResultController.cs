@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BattlePausePresenter : BasePresenter 
+public class BattleResultController : BaseController 
 {
 	protected override void OnEnter ()
 	{
